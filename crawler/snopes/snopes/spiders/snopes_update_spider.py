@@ -24,6 +24,7 @@ def get_urls():
     sql = """
         SELECT post_id, url
         FROM snopes
+        WHERE veracity = 'None' 
         """
     cursor.execute(sql)
     rs = cursor.fetchall()
@@ -111,6 +112,12 @@ class MmlabSpider(scrapy.Spider):
         if veracity == None:
             veracity = response.xpath('//a[contains(@class, "claim")]/span/text()').extract_first()
 
+        if veracity == None:
+            veracity = response.xpath('//font//b//i//text()').extract_first()
+            if veracity != None:
+                veracity = veracity.replace(".", "")
+            #veracity = response.xpath('//font[@color, "#FF0000"]//b//i/text()').extract_first()
+
         share_count = response.xpath('//div[@class="share-controls-item numbers share-count"]/text()').extract()[1].strip()
         fact_checker = response.xpath('//input[@name="post_author"]/@value').extract_first()
         if fact_checker == None:
@@ -133,7 +140,8 @@ class MmlabSpider(scrapy.Spider):
 
         #if veracity != None and veracity != "":
         #yield {"url":url, "veracity": veracity, "share":share_count, "fact_checker":fact_checker, "claim":claim, "tag":tag, "source":source, "detailed_description":detailed_description}
-        yield {"url":url, "sources" : source}
+#        yield {"url":url, "sources" : source}
+        yield {"url" : url, "veracity" : veracity}
 
 
 

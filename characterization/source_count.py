@@ -290,7 +290,8 @@ if __name__ == "__main__":
 #        print(item, count1, count2)
     source_all.append(news_count_exist)
     source_all.append(news_count_not_exist)
-
+    print(veracity_list)
+    print(source_all)
     StackBarPlt = StackBarPlot(np.arange(len(veracity_list)), source_all)
     StackBarPlt.set_xticks(veracity_list)
     StackBarPlt.set_legends(source_presence, "Source Presence")
@@ -449,14 +450,14 @@ if __name__ == "__main__":
         result = sorted(result.items(), key = operator.itemgetter(1))
         result.reverse()
 
-    
+        '''
         print(item)
         for i in range(10):
             try :
                 print("%s, %s"%(result[i][0], result[i][1]))
             except IndexError:
                 continue
-
+        '''
 
 
 
