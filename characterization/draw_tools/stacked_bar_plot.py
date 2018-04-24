@@ -11,7 +11,7 @@ class StackBarPlot:
         self.colors = plt.get_cmap('gist_rainbow') 
         self.colors = []
         self.subplot_num = subplot_num
-        self.fig = plt.figure(figsize=(30,10))
+        self.fig = plt.figure(figsize=(30,30))
 
         for name, hex_value in matplotlib.colors.cnames.iteritems():
             self.colors.append(hex_value)

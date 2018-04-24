@@ -7,7 +7,7 @@ class BarPlot:
 
     def __init__(self, subplot_num):
         self.fig_num = 1
-        self.fig = plt.figure(figsize=(20,20))
+        self.fig = plt.figure(figsize=(30,10))
         self.subplot_x = subplot_num
         self.subplot_y = subplot_num
 

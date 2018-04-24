@@ -1,5 +1,4 @@
-import MySQLdb 
-import json
+import MySQLdb
 import re
 import operator
 import pandas as pd
@@ -41,8 +40,33 @@ def titles_year(year):
 
     return [item[0] for item in rs]
 
+def titles_year_veracity(year):
+    #print("%s"%(year))
+    sql = """
+        SELECT title
+        FROM snopes_set
+        WHERE year(published_date) = '%s' and (veracity='false' or veracity='true' or veracity ='mixture')
+        """%(year)
+
+    cursor.execute(sql)
+    rs = cursor.fetchall()
+
+    return [item[0] for item in rs]
+
+def titles_category(category):
+    sql = """
+        SELECT title
+        FROM snopes_set
+        WHERE category = '%s'
+        """%(category)
+
+    cursor.execute(sql)
+    rs = cursor.fetchall()
+
+    return [item[0] for item in rs]
+
+
 def titles_year_category(year, category):
-    #print("%s , %s"%(year, category))
     sql = """
         SELECT title
         FROM snopes_set
@@ -120,6 +144,12 @@ def frequency(title_list):
     '''
     return result[0:10]
 
+def tuple_to_string(tuple_list):
+    string_list = []
+    for item in tuple_list:
+        string_list.append("%s\n(%s)"%(item[0], item[1]))
+
+    return string_list
 if __name__ == '__main__':
     conn, cursor, = sql_connect()   
     
@@ -130,11 +160,11 @@ if __name__ == '__main__':
     #frequency(titles(2011,7))
     #for i in range(2011,2019):
     #    frequency(titles_year(i))
-    categories = ["medical", "politics", "viral phenomena", "history", "science", "food"]
+    categories = ["medical", "politics", "politicians", "business", "crime", "viral phenomena", "history", "science", "food"]
     years = ["2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018"]
 
     # Create a Pandas Excel writer using XlsxWriter as the engine.
-    writer = pd.ExcelWriter('trending_keywords_year.xlsx', engine='xlsxwriter')
+    writer = pd.ExcelWriter('./trending_words/trending_keywords_year_month.xlsx', engine='xlsxwriter')
     #writer = pd.ExcelWriter('./trending_words/trending_keywords_year.xlsx', engine='xlsxwriter')
     dataframe_list = []
     for i in years[:-1]:
@@ -174,15 +204,16 @@ if __name__ == '__main__':
         #backdata
         df = pd.DataFrame(year_value, index = range(2011, 2019), columns = range(1, 11))
         df.to_csv('./trending_words/%s_data.csv'%item, encoding='utf-8')
-
+    
+    
 
     #top 10 categories in a year
     #make one total list 
     category_all = []
     for i in range(2011, 2019):
-        categories, values = category_list(i)
+        c, values = category_list(i)
 
-        for item in categories:
+        for item in c:
             if item not in category_all:
                 category_all.append(item)
 
@@ -203,8 +234,49 @@ if __name__ == '__main__':
     LinePlt.set_xticks(range(2011, 2018))
     LinePlt.set_legends(category_all)
     LinePlt.save_image('./image/category_count_year.png')
+
+    print("top key words by category")
+    writer = pd.ExcelWriter('./trending_words/trending_keywords_category.xlsx', engine='xlsxwriter')
+    dataframe_list = []
+    category_data = []
+    for item in categories:    
+        words = frequency(titles_category(item))
+        category_data.append(tuple_to_string(words))
+    df = pd.DataFrame(category_data, index = categories, columns = range(1,11))
+    dataframe_list.append(df)
+        #df.to_csv('./trending_words/%s.csv'%i, encoding='utf-8')
+
+    for i, item in enumerate(dataframe_list):
+        item.to_excel(writer, sheet_name=years[i])
+    writer.save()
+
+    print("top key words by year")
+    writer = pd.ExcelWriter('./trending_words/trending_keywords_year.xlsx', engine='xlsxwriter')
+    dataframe_list = []
+    year_data = []
+    for year in range(2011, 2019):    
+        words = frequency(titles_year(year))
+        year_data.append(tuple_to_string(words))
+    df = pd.DataFrame(year_data, index = range(2011, 2019), columns = range(1,11))
+    dataframe_list.append(df)
+
+    for i, item in enumerate(dataframe_list):
+        item.to_excel(writer, sheet_name=years[i])
+    writer.save()
+
+    print("top key words by year true/false/mixture")
+    writer = pd.ExcelWriter('./trending_words/trending_keywords_year_veracity.xlsx', engine='xlsxwriter')
+    dataframe_list = []
+    year_data = []
+    for year in range(2011, 2019):    
+        words = frequency(titles_year_veracity(year))
+        year_data.append(tuple_to_string(words))
+    df = pd.DataFrame(year_data, index = range(2011, 2019), columns = range(1,11))
+    dataframe_list.append(df)
+
+    for i, item in enumerate(dataframe_list):
+        item.to_excel(writer, sheet_name=years[i])
+    writer.save()
+
+
     sql_close(cursor, conn)
-
-    
-
-

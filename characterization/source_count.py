@@ -129,10 +129,7 @@ def veracity_types():
     sql = """
         SELECT veracity
         FROM snopes_set
-        WHERE veracity != 'None' and year(published_date) >= 2017
-        GROUP BY veracity
-        ORDER BY count(*) desc
-        LIMIT 6 
+        WHERE (veracity = 'False' or veracity = 'True' or veracity = 'Mixture') and year(published_date) >= 2017
         """
     cursor.execute(sql)
     rs = cursor.fetchall()
@@ -231,6 +228,40 @@ def source_num_by_veracity(tuples):
             continue
 
     return veracity_dict
+
+def top_source(veracity):
+    condition = "veracity != ''"
+    if veracity != 'all':
+        condition = "veracity = '%s'"%veracity
+
+    sql = """
+        SELECT sources_json
+        FROM snopes_set
+        WHERE %s
+        """%(condition)
+    
+    cursor.execute(sql)
+    rs = cursor.fetchall()
+
+    source_list = [item[0] for item in rs]
+    source_dict = {}
+    for s in sources_json:
+        try :
+            if s != "None" and s != None and s != '"None"':
+                s_list = json.loads(s)
+                for source_press in s_list:
+                    press = source_press['press'].replace(".", "").strip()
+                    if press != "":
+                        source_dict[press] = 0
+
+        except KeyError as e:
+            continue
+    print(source_dict.keys())
+    print(len(source_dict.keys()))
+    #source and article num count
+    return article_num_by_source(source_dict, source_list)
+
+
 
 def top_source_by_category(category, veracity):
     condition = ''
@@ -441,7 +472,7 @@ if __name__ == "__main__":
        print("%d : %d"%(num, articles_num_from_2017.values().count(num)))
     '''
     #top source media/press by category
-    category_list = ["politics", "viral phenomena", "food", "science", "history", "medical", "fauxtography", "fake news", "politicians", "inboxer rebellion", "business", "crime", "entertainment"]
+    category_list = ["politics", "viral phenomena", "food", "science", "history", "medical", "fauxtography", "fake news", "politicians", "inboxer rebellion", "business", "crime", "entertainment", "crime"]
 
     
     for item in category_list:
@@ -450,15 +481,23 @@ if __name__ == "__main__":
         result = sorted(result.items(), key = operator.itemgetter(1))
         result.reverse()
 
-        '''
-        print(item)
+       
         for i in range(10):
             try :
                 print("%s, %s"%(result[i][0], result[i][1]))
             except IndexError:
                 continue
-        '''
+        
+    print("top source with all articles")
+    result = top_source('all')
+    result = sorted(result.items(), key=operator.itemgetter(1))
+    result.reverse()
 
+    for i in range(10):
+        try :
+            print("%s, %s"%(result[i][0], result[i][1]))
+        except IndexError:
+            continue
 
 
 
