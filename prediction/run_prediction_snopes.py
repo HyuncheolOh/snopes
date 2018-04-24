@@ -10,9 +10,11 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 """
 
 from __future__ import print_function
-
+import os
 import tensorflow as tf
+import time
 import random
+import sys
 import dataload
 import numpy as np
 import util_sampling as sampling
@@ -94,7 +96,19 @@ class ToySequenceData(object):
                                                       batch_size, len(self.data))])
         self.batch_id = min(self.batch_id + batch_size, len(self.data))
         return batch_data, batch_labels, batch_seqlen
-
+# =========
+# arg
+# ========
+arg_num = len(sys.argv)
+print("arg num : %d"%arg_num)
+model_name = None
+if (arg_num > 1):
+    model_name = sys.argv[1]
+else:
+    model_name = 'pred'
+out_dir = os.path.abspath(os.path.join(os.path.curdir, "model/snopes"))
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
 
 # ==========
 #   MODEL
@@ -102,8 +116,8 @@ class ToySequenceData(object):
 
 # Parameters
 learning_rate = 0.01
-training_steps = 10000
-batch_size = 150
+epoch = 1
+batch_size = 100 
 display_step = 100
 
 # Network Parameters
@@ -209,12 +223,14 @@ accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
 # Initialize the variables (i.e. assign their default value)
 init = tf.global_variables_initializer()
-
+saver = tf.train.Saver()
 # Start training
 with tf.Session() as sess:
     # Run the initializer
     sess.run(init)
-    for step in range(1, training_steps + 1):
+    repeat = len(X_train) / batch_size + 1
+    #for step in range(1, training_steps + 1):
+    for step in range(0, repeat * epoch + 1):
         batch_x, batch_y, batch_seqlen = trainset.next(batch_size)
         # Run optimization op (backprop)
         sess.run(optimizer, feed_dict={x: batch_x, y: batch_y,
@@ -222,14 +238,15 @@ with tf.Session() as sess:
         if step % display_step == 0 or step == 1:
             
             # Calculate batch accuracy & loss
-            acc, loss = sess.run([accuracy, cost], feed_dict={x: batch_x, y: batch_y,
+            p, acc, loss = sess.run([pred, accuracy, cost], feed_dict={x: batch_x, y: batch_y,
                                                               seqlen: batch_seqlen})
             
-            print("Step " + str(step * batch_size) + ", Minibatch Loss= " + \
+            print("Step " + str(step) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
-            
     print("Optimization Finished!")
+    #saver.save(sess, './model/snopes/%s.ckpt'%model_name)
+    saver.save(sess, out_dir+'/snopes.ckpt')
 
     # Calculate accuracy
     test_data = testset.data

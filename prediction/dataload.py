@@ -70,10 +70,10 @@ def get_claim_veracity():
     sql = """
         SELECT claim, veracity
         FROM snopes_set 
-        WHERE (veracity = 'true' or veracity = 'false') and (claim != 'None' and claim != '') and published_date < '2018-01-01'
+        WHERE (veracity = 'true' or veracity = 'false') and (claim != '' and claim != 'None')
     """
-    
-        #WHERE (veracity = 'true' or veracity = 'false') and claim != '' and published_date >= '1995-01-01' 
+
+    #WHERE (veracity = 'true' or veracity = 'false') and claim != '' and published_date >= '1995-01-01' 
     cursor.execute(sql)
     rs = cursor.fetchall()
 
@@ -136,7 +136,25 @@ def embed_words(x, veracity_list, max_length=-1):
     y = np.array(y)
 
     return _X, y 
-   
+
+def batch_iter(data, batch_size, num_epochs, shuffle=True):
+    """Iterate the data batch by batch"""
+    data = np.array(data)
+    data_size = len(data)
+    num_batches_per_epoch = int(data_size / batch_size) + 1
+
+    for epoch in range(num_epochs):
+	if shuffle:
+            shuffle_indices = np.random.permutation(np.arange(data_size))
+	    shuffled_data = data[shuffle_indices]
+	else:
+	    shuffled_data = data
+
+	for batch_num in range(num_batches_per_epoch):
+	    start_index = batch_num * batch_size
+	    end_index = min((batch_num + 1) * batch_size, data_size)
+	    yield shuffled_data[start_index:end_index]
+  
 if __name__ == '__main__':
     get_claim_veracity()
     get_politifact_data()

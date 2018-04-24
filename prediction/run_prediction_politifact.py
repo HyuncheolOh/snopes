@@ -11,6 +11,8 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 
 from __future__ import print_function
 
+import time
+import os
 import tensorflow as tf
 import random
 import dataload
@@ -99,29 +101,38 @@ class ToySequenceData(object):
 # ==========
 #   MODEL
 # ==========
+# Save model
+timestamp = str(int(time.time()))
+#out_dir = os.path.abspath(os.path.join(os.path.curdir, "model/politifact/%s_"%timestamp))
+out_dir = os.path.abspath(os.path.join(os.path.curdir, "model/politifact"))
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
 
 # Parameters
 learning_rate = 0.01
-training_steps = 10000
-batch_size = 150
+epoch = 3
+batch_size = 100 
 display_step = 100
 
 # Network Parameters
 n_hidden = 100  # hidden layer num of features
 n_classes = 2  # linear sequence or not
 
-X_train, y_train = dataload.get_claim_veracity()
-#X_test, y_test = dataload.get_claim_veracity_2018()
+#X, y = dataload.get_claim_veracity()
+X, y = dataload.get_politifact_data()
+#X, y = comment_load.get_data()
 
-X_test, y_test = dataload.get_politifact_data()
-
-max_length = len(max(X_train, key=len))
+print("Before sampling. All data - non-zero : %s, total : %s"%(np.count_nonzero(y), len(y)))
+max_length = len(max(X, key=len))
 seq_max_len = max_length # Sequence max length
 print(seq_max_len)
 
-#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
-X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0, random_state=42)
-_, X_test, _, y_test = train_test_split(X_test, y_test, test_size = 0.20, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+print("Before sampling. Train data - non-zero : %s, total : %s"%(np.count_nonzero(y_train), len(y_train)))
+
+#print(X_train.shape, y_train.shape)
+X_train, y_train = sampling.sampling('SMOTE', X_train, y_train)
+X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.0, random_state=42)
 
 print("After sampling. Train data - non-zero : %s, total : %s"%(np.count_nonzero(y_train), len(y_train)))
 print("After sampling. Test data - non-zero : %s, total : %s"%(np.count_nonzero(y_test), len(y_test)))
@@ -207,12 +218,14 @@ accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
 # Initialize the variables (i.e. assign their default value)
 init = tf.global_variables_initializer()
-
+saver = tf.train.Saver()
 # Start training
 with tf.Session() as sess:
     # Run the initializer
     sess.run(init)
-    for step in range(1, training_steps + 1):
+    repeat = len(X_train) / batch_size + 1
+    #for step in range(1, training_steps + 1):
+    for step in range(0, repeat * epoch + 1):
         batch_x, batch_y, batch_seqlen = trainset.next(batch_size)
         # Run optimization op (backprop)
         sess.run(optimizer, feed_dict={x: batch_x, y: batch_y,
@@ -220,15 +233,14 @@ with tf.Session() as sess:
         if step % display_step == 0 or step == 1:
             
             # Calculate batch accuracy & loss
-            acc, loss = sess.run([accuracy, cost], feed_dict={x: batch_x, y: batch_y,
+            p, acc, loss = sess.run([pred, accuracy, cost], feed_dict={x: batch_x, y: batch_y,
                                                               seqlen: batch_seqlen})
             
-            print("Step " + str(step * batch_size) + ", Minibatch Loss= " + \
+            print("Step " + str(step) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
-            
     print("Optimization Finished!")
-
+    saver.save(sess, out_dir+'/politifact.ckpt')
     # Calculate accuracy
     test_data = testset.data
     test_label = testset.labels
