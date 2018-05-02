@@ -1,0 +1,2 @@
+model_checkpoint_path: "/media1/Fakenews/Snopes/prediction/model/politifact/politifact.ckpt"
+all_model_checkpoint_paths: "/media1/Fakenews/Snopes/prediction/model/politifact/politifact.ckpt"

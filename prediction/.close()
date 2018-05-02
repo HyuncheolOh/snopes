@@ -1,0 +1,58 @@
+import numpy as np
+import matplotlib
+matplotlib.use('agg')
+import matplotlib.pyplot as plt
+from itertools import cycle
+
+from sklearn import svm, datasets
+from sklearn.metrics import roc_curve, auc
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import label_binarize
+from sklearn.multiclass import OneVsRestClassifier
+from scipy import interp
+
+
+def ruc_roc():
+    path = './result/result.tsv'
+
+    results = []
+    with open(path, 'r') as f:
+        acc= f.readline.replace('\n', '')
+        print("acc : %s"%acc)
+
+        for line in f:
+            splits = line.replace('\n', '').split('\t')
+            sub_result = map(lambda x:x.split(','), splits)
+            results.append(sub_result)
+
+    y_true = map(itemgetter(0), results)
+    y_pred = map(itemgetter(1), results)
+
+    print(y_true)
+    print(y_tpre)
+    print(type(y_true))
+    # Compute ROC curve and ROC area for each class
+    y_test = np.array([0, 0, 1, 1])
+    y_score = np.array([1, 1, 0, 1])
+    fpr, tpr, thresholds = roc_curve(y_test, y_score)
+    roc_auc = auc(fpr, tpr)
+    thresholds
+    # Compute micro-average ROC curve and ROC area
+    #fpr["micro"], tpr["micro"], _ = roc_curve(y_test.ravel(), y_score.ravel())
+    #roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+
+    fig = plt.figure()
+    lw = 2
+    plt.plot(fpr, tpr, color='darkorange',
+                     lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic')
+    plt.legend(loc="lower right")
+    plt.savefig('./roc_line.png')
+
+if __name__ == "__main__":
+    run_roc()

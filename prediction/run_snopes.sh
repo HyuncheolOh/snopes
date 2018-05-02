@@ -1,0 +1,43 @@
+#!/bin/sh
+
+python run_learning_snopes.py 2010; python run_predict.py snopes 2010; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2010; python run_predict.py snopes 2010; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2010; python run_predict.py snopes 2010; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2010; python run_predict.py snopes 2010; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2010; python run_predict.py snopes 2010; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2011; python run_predict.py snopes 2011; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2011; python run_predict.py snopes 2011; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2011; python run_predict.py snopes 2011; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2011; python run_predict.py snopes 2011; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2011; python run_predict.py snopes 2011; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2012; python run_predict.py snopes 2012; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2012; python run_predict.py snopes 2012; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2012; python run_predict.py snopes 2012; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2012; python run_predict.py snopes 2012; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2012; python run_predict.py snopes 2012; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2013; python run_predict.py snopes 2013; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2013; python run_predict.py snopes 2013; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2013; python run_predict.py snopes 2013; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2013; python run_predict.py snopes 2013; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2013; python run_predict.py snopes 2013; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2014; python run_predict.py snopes 2014; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2014; python run_predict.py snopes 2014; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2014; python run_predict.py snopes 2014; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2014; python run_predict.py snopes 2014; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2014; python run_predict.py snopes 2014; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2015; python run_predict.py snopes 2015; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2015; python run_predict.py snopes 2015; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2015; python run_predict.py snopes 2015; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2015; python run_predict.py snopes 2015; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2015; python run_predict.py snopes 2015; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2016; python run_predict.py snopes 2016; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2016; python run_predict.py snopes 2016; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2016; python run_predict.py snopes 2016; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2016; python run_predict.py snopes 2016; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2016; python run_predict.py snopes 2016; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2017; python run_predict.py snopes 2017; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2017; python run_predict.py snopes 2017; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2017; python run_predict.py snopes 2017; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2017; python run_predict.py snopes 2017; python analyze_result.py; python roc_curve.py lstm 1;
+python run_learning_snopes.py 2017; python run_predict.py snopes 2017; python analyze_result.py; python roc_curve.py lstm 1;
+

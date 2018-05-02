@@ -1,0 +1,2 @@
+model_checkpoint_path: "/media1/Fakenews/Snopes/prediction/model/None/None.ckpt"
+all_model_checkpoint_paths: "/media1/Fakenews/Snopes/prediction/model/None/None.ckpt"
