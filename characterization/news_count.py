@@ -68,6 +68,20 @@ def article_num_by_year(year, month):
     count = rs[0][0]
     return count
 
+def sharecount_by_year(year, month):
+    sql = """
+        SELECT share_count
+        FROM snopes_set
+        WHERE year(published_date) = %s and month(published_date) = %s
+        """
+
+    cursor.execute(sql, [year, month])
+    rs = cursor.fetchall()
+    sharecount_list = [item[0] for item in rs]
+    if len(sharecount_list)==0:
+        return 0
+    return sum(sharecount_list, 0.0) / len(sharecount_list)
+
 
 def article_num_by_year_verdict(year, month, verdict):
     sql = """
@@ -137,15 +151,19 @@ if __name__ == "__main__":
     Bar = BarPlot(subplot_num(len(year_list)))
     for year in year_list:
         num_list = []
+        sharecount_list = []
         for month in month_list:
             num = article_num_by_year(year, month)
+            sharecount = sharecount_by_year(year, month)
             if year == 2018 and month >=4:
                 num = 0
             num_list.append(num)
+            sharecount_list.append(sharecount)
 
-        Bar.set_data(np.arange(len(month_list)) + 1, num_list, year)
+        #Bar.set_data(np.arange(len(month_list)) + 1, num_list, year)
+        Bar.set_bar_line(np.arange(len(month_list)) + 1, num_list, sharecount_list, year)
         Bar.set_width(0.6)
-        Bar.set_ylim(250)
+        #Bar.set_ylim(250)
 
     Bar.save_image('./image/num_articles_by_year_month_bar.png')
     

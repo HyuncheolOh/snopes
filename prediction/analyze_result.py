@@ -27,6 +27,10 @@ def analyze():
   for fname in files:
     if fname[-3:] != 'tsv':
       continue
+    
+    if len(sys.argv) > 1:
+      fname = sys.argv[1]
+
     f = open('%s/%s'%(path, fname), 'r')
     acc = f.readline().replace('\n', '')
 

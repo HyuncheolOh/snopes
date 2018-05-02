@@ -77,7 +77,7 @@ testset = ToySequenceData(X_test, y_test, max_length)
 # Training Parameters
 learning_rate = 0.01
 num_steps = 300
-batch_size = 32
+batch_size = 100
 display_step = 10
 
 # Network Parameters
@@ -193,8 +193,6 @@ with tf.Session() as sess:
             print("Step " + str(step) + ", Minibatch Loss= " + \
                   "{:.4f}".format(loss) + ", Training Accuracy= " + \
                   "{:.3f}".format(acc))
-            print(batch_y)
-            print(pred)
 
     print("Optimization Finished!")
 

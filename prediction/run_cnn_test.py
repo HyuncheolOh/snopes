@@ -13,6 +13,8 @@ from __future__ import division, print_function, absolute_import
 import tensorflow as tf
 import dataload
 import numpy as np
+import sys
+import os
 import util_sampling as sampling
 from sklearn.model_selection import train_test_split
 from tensorflow import flags
@@ -58,12 +60,21 @@ class ToySequenceData(object):
         self.batch_id = min(self.batch_id + batch_size, len(self.data))
         return batch_data, batch_labels, batch_seqlen
 
+# Model
+arg_num = len(sys.argv)
+model_name = None
+if (arg_num > 1):
+    model_name = sys.argv[1]
+out_dir = os.path.abspath(os.path.join(os.path.curdir, "model/%s"%model_name))
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
 
 #data load 
-_X, _y = dataload.get_claim_veracity()
+_X, _y = dataload.get_snopes_data(sys.argv[2])
+#_X, _y = dataload.get_claim_veracity()
 #_X, _y = dataload.get_politifact_data()
 max_length = len(max(_X, key=len))
-
+print("max length : %d"%max_length)
 X_train, X_test, y_train, y_test = train_test_split(_X, _y, test_size = 0.20, random_state = 42)
 X_train, y_train = sampling.sampling('SMOTE', X_train, y_train)
 X_train, _, y_train, _ = train_test_split(X_train, y_train, test_size=0.0, random_state=42)
@@ -77,15 +88,15 @@ FLAGS._parse_flags()
 trainset = ToySequenceData(X_train, y_train, max_length)
 testset = ToySequenceData(X_test, y_test, max_length)
 # Training Parameters
-learning_rate = 0.01
-num_steps = 10000
-batch_size = 12
-display_step = 50
+learning_rate = 0.001
+epoch = 1000 
+batch_size = 100 
+display_step = 100
 embedding_size = 100
 # Network Parameters
 num_input = 784 # MNIST data input (img shape: 28*28)
 num_classes = 2 # MNIST total classes (0-9 digits)
-dropout = 0.75 # Dropout, probability to keep units
+dropout = 0.5 # Dropout, probability to keep units
 l2_reg_lambda = 0.1
 # tf Graph input
 #X = tf.placeholder(tf.float32, [None, num_input])
@@ -142,7 +153,7 @@ cnn = TextCNN(X, Y, keep_prob)
 #train_op = optimizer.minimize(cnn.loss)
 
 global_step = tf.Variable(0, name="global_step", trainable=False)
-optimizer = tf.train.AdamOptimizer(1e-3)
+optimizer = tf.train.AdamOptimizer(learning_rate)
 grads_and_vars = optimizer.compute_gradients(cnn.loss)
 train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
 
@@ -153,30 +164,34 @@ train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
 
 # Initialize the variables (i.e. assign their default value)
 init = tf.global_variables_initializer()
-
+saver = tf.train.Saver()
 # Start training
 with tf.Session() as sess:
 
     # Run the initializer
     sess.run(init)
 
-    for step in range(1, num_steps+1):
+    repeat = int(len(X_train) / batch_size) + 1
+    print("Repeat until %d"%(repeat * epoch))
+    for step in range(0, repeat * epoch + 1):
         batch_x, batch_y, _ = trainset.next(batch_size)
         # Run optimization op (backprop)
         sess.run(train_op, feed_dict={X: batch_x, Y: batch_y, keep_prob: 0.5})
         if step % display_step == 0 or step == 1:
             # Calculate batch loss and accuracy
-            outputs, loss, acc = sess.run([cnn.scores, cnn.loss, cnn.accuracy], feed_dict={X: batch_x,
+            outputs, loss, acc, pred, scores = sess.run([cnn.scores, cnn.loss, cnn.accuracy, cnn.predictions, cnn.scores], feed_dict={X: batch_x,
                                                                  Y: batch_y,
                                                                  keep_prob: 1.0})
+            
             print("Step " + str(step) + ", Minibatch Loss= " + \
                   "{:.4f}".format(loss) + ", Training Accuracy= " + \
                   "{:.3f}".format(acc))
-            #print(np.argmax(batch_y, axis=1))
-            #print(np.argmax(outputs, axis=1))
-
+           # print(np.argmax(batch_y, axis=1))
+           # print(pred)
+            print("%s/%s"%(np.count_nonzero(pred), len(pred)))
+            #print(scores)
     print("Optimization Finished!")
-
+    saver.save(sess, out_dir + '/%s.ckpt'%model_name)
     test_data = testset.data
     test_label = testset.labels
     # Calculate accuracy for 256 MNIST test images
@@ -185,8 +200,10 @@ with tf.Session() as sess:
 
     test_label = np.argmax(test_label, axis=1)
     outputs = np.argmax(outputs, axis=1)
-    print(test_label)
+    print("=== predictions ===")
     print(outputs)
+    print("=== labels ===")
+    print(test_label)
 
     diff = 0
     #for seq_t, seq_p in zip(test_label, outputs):
@@ -199,7 +216,7 @@ with tf.Session() as sess:
     acc = 1 - float(diff)/len(test_label)
     print("Accuracy : %s"%(acc))
 
-    f = open('./result/result.news.tsv', 'w')
+    f = open('./result/result.cnn_test.tsv', 'w')
     f.write('%.4f\n'%(acc))
     for test_seq, pred_seq in zip(test_label, outputs):
         f.write('%s\t%s\n'%(test_seq, pred_seq))

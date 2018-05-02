@@ -78,6 +78,16 @@ def titles_year_category(year, category):
 
     return [item[0] for item in rs]
 
+def titles_politifact():
+    sql = """
+        SELECT title
+        FROM other_data
+        """
+    cursor.execute(sql)
+    rs = cursor.fetchall()
+
+    return [item[0] for item in rs]
+
 def category_list(year):
     sql = """
         SELECT category, count(*)
@@ -278,5 +288,7 @@ if __name__ == '__main__':
         item.to_excel(writer, sheet_name=years[i])
     writer.save()
 
-
+    print("top key words of PolitiFact")
+    words = frequency(titles_politifact())
+    print(words)
     sql_close(cursor, conn)
