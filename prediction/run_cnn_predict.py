@@ -69,11 +69,13 @@ if (arg_num > 1):
     model_path  = os.path.abspath(os.path.join(os.path.curdir, "model/%s/%s.ckpt"%(model_name, model_name)))
 
 print("model path : %s"%model_path)
+arg = sys.argv[2]
 #data load 
 #_X, _y = dataload.get_claim_veracity()
-#_X, _y = dataload.get_snopes_politics()
-_X, _y = dataload.get_politifact_data()
+#_X, _y = dataload.get_snopes_politics(arg)
+#_X, _y = dataload.get_politifact_data(arg)
 #_X, _y = dataload.get_snopes_data()
+_X, _y = dataload.get_snopes_data_category(arg)
 max_length = len(max(_X, key=len))
 print("max length : %d"%max_length)
 print("After sampling. Test data - non-zero : %s, total : %s"%(np.count_nonzero(_y), len(_y)))
@@ -83,8 +85,8 @@ FLAGS = tf.flags.FLAGS
 FLAGS._parse_flags()
 testset = ToySequenceData(_X, _y, max_length)
 # Training Parameters
-learning_rate = 0.001
-epoch =  1000
+learning_rate = 0.01
+epoch =  100
 batch_size = 100 
 display_step = 100
 embedding_size = 100

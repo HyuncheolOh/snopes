@@ -8,21 +8,20 @@ do
 
 	echo "remove old data file"
 	rm data_new.json
-	rm snopes_update.json
+	rm snopes_sharecount.json
 	sleep 1
 
 	echo "update sharecount of Snopes.com articles"
 	sleep 1
-	cd ../crawler/snopes
-	scrapy crawl sharecount_update -o snopes_update.json
+	scrapy crawl sharecount_update -o snopes_sharecount.json
 
 	cd ../../
 	
 	cd database
-	rm snopes_update.json
+	rm snopes_sharecount.json
 
-	cp ../crawler/snopes/snopes_update.json ./snopes_update.json
-	python update_data.py
+	cp ../crawler/snopes/snopes_sharecount.json ./snopes_sharecount.json
+	python update_sharecount.py
     	
 	timestamp=`date +%Y%m%d%H%M`
 	echo "$timestamp"

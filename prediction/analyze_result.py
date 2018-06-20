@@ -34,7 +34,7 @@ def analyze():
     f = open('%s/%s'%(path, fname), 'r')
     acc = f.readline().replace('\n', '')
 
-    print fname, acc
+    #print fname, acc
 
     results = []
     acc_depth = []
@@ -58,7 +58,7 @@ def analyze():
       recall = recall_score(y_true_int, y_pred_int)
       f1 = f1_score(y_true_int, y_pred_int)
       #print depth, precision_recall_fscore_support(map(int, y_true), map(int, y_pred))
-      print accuracy, precision, recall, f1
+      print("%s : %.4f, %.4f, %.4f, %.4f"%(fname, accuracy, precision, recall, f1))
   
       """
       correct = 0

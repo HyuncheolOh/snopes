@@ -23,7 +23,7 @@ def get_urls():
     sql = """
         SELECT post_id, url
         FROM snopes_set
-        WHERE published_date > '2017-01-01'
+        WHERE published_date >= '2018-06-01'
         """
     cursor.execute(sql)
     rs = cursor.fetchall()
@@ -40,7 +40,8 @@ class MmlabSpider(scrapy.Spider):
     def parse(self, response):
         url = response.xpath('//meta[@property="og:url"]/@content').extract_first()
 
-        share_count = response.xpath('//div[@class="share-controls-item numbers share-count"]/text()').extract()[1].strip()
+        #share_count = response.xpath('//div[@class="share-controls-item numbers share-count"]/text()').extract()[1].strip()
+        share_count = "0"
         yield {"url": url,  "share_count" : share_count}
 
 

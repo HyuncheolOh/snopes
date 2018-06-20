@@ -15,11 +15,13 @@ if __name__ == '__main__':
     conn, cursor, = sql_connect()
 
     sql = """
-       CREATE TABLE other_data ( 
+       CREATE TABLE factchecking_data ( 
           id INT PRIMARY KEY AUTO_INCREMENT,
           title text,
+          postid text, 
           dates datetime,
           veracity varchar(64),
+          url text,
           source text
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
         """

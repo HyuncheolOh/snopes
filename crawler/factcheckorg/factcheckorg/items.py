@@ -11,4 +11,10 @@ import scrapy
 class FactcheckorgItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    title = scrapy.Field()
+    url = scrapy.Field()
+    veracity = scrapy.Field()
+    date = scrapy.Field()
+    source = scrapy.Field()
+    category = scrapy.Field()
+    claim = scrapy.Field()

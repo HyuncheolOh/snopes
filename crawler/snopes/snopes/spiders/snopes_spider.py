@@ -141,7 +141,8 @@ class MmlabSpider(scrapy.Spider):
         if item['veracity'] == None:
             item['veracity'] = response.xpath('//a[contains(@class, "claim")]/span/text()').extract_first()
 
-        item['share_count'] = response.xpath('//div[@class="share-controls-item numbers share-count"]/text()').extract()[1].strip()
+        #item['share_count'] = response.xpath('//div[@class="share-controls-item numbers share-count"]/text()').extract()[1].strip()
+        item['share_count'] = "0" 
         item['fact_checker'] = response.xpath('//input[@name="post_author"]/@value').extract_first()
         if item['fact_checker'] == None:
             item['fact_checker'] = response.xpath('//a[@class="author-link"]/text()').extract_first()
